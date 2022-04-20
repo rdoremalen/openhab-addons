@@ -13,11 +13,11 @@
 package org.openhab.binding.plugwiseha.internal.handler;
 
 import static org.openhab.binding.plugwiseha.internal.PlugwiseHABindingConstants.*;
-import static org.openhab.core.library.unit.MetricPrefix.*;
-import static org.openhab.core.thing.ThingStatus.*;
-import static org.openhab.core.thing.ThingStatusDetail.BRIDGE_OFFLINE;
-import static org.openhab.core.thing.ThingStatusDetail.COMMUNICATION_ERROR;
-import static org.openhab.core.thing.ThingStatusDetail.CONFIGURATION_ERROR;
+import static org.openhab.core.library.unit.MetricPrefix.HECTO;
+import static org.openhab.core.thing.ThingStatus.INITIALIZING;
+import static org.openhab.core.thing.ThingStatus.OFFLINE;
+import static org.openhab.core.thing.ThingStatus.ONLINE;
+import static org.openhab.core.thing.ThingStatusDetail.*;
 
 import java.util.List;
 import java.util.Map;
@@ -144,8 +144,7 @@ public class PlugwiseHAApplianceHandler extends PlugwiseHABaseHandler<Appliance,
                     try {
                         controller.setRelay(entity, (command == OnOffType.ON));
                     } catch (PlugwiseHAException e) {
-                        logger.warn("Unable to switch relay lock {} for appliance '{}'", (State) command,
-                                entity.getName());
+                        logger.warn("Unable to switch relay lock {} for appliance '{}'", command, entity.getName());
                     }
                 }
                 break;
@@ -171,7 +170,7 @@ public class PlugwiseHAApplianceHandler extends PlugwiseHABaseHandler<Appliance,
                     try {
                         controller.setRelay(entity, command == OnOffType.ON);
                     } catch (PlugwiseHAException e) {
-                        logger.warn("Unable to switch relay {} for appliance '{}'", (State) command, entity.getName());
+                        logger.warn("Unable to switch relay {} for appliance '{}'", command, entity.getName());
                     }
                 }
                 break;
@@ -220,6 +219,7 @@ public class PlugwiseHAApplianceHandler extends PlugwiseHABaseHandler<Appliance,
             case APPLIANCE_TEMPERATURE_CHANNEL:
             case APPLIANCE_VALVEPOSITION_CHANNEL:
             case APPLIANCE_WATERPRESSURE_CHANNEL:
+            case APPLIANCE_RETURNWATERTEMPERATURE_CHANNEL:
                 state = UnDefType.NULL;
                 break;
             case APPLIANCE_BATTERYLEVELLOW_CHANNEL:
@@ -378,6 +378,14 @@ public class PlugwiseHAApplianceHandler extends PlugwiseHABaseHandler<Appliance,
                             ? SIUnits.CELSIUS
                             : ImperialUnits.FAHRENHEIT;
                     state = new QuantityType<Temperature>(entity.getBoilerTemp().get(), unit);
+                }
+                break;
+            case APPLIANCE_RETURNWATERTEMPERATURE_CHANNEL:
+                if (entity.getBoilerTemp().isPresent()) {
+                    Unit<Temperature> unit = entity.getReturnWaterTempUnit().orElse(UNIT_CELSIUS).equals(UNIT_CELSIUS)
+                            ? SIUnits.CELSIUS
+                            : ImperialUnits.FAHRENHEIT;
+                    state = new QuantityType<Temperature>(entity.getReturnWaterTemp().get(), unit);
                 }
                 break;
             case APPLIANCE_DHWSETPOINT_CHANNEL:

@@ -24,7 +24,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * controller for a Plugwise appliance.
  * It implements the {@link PlugwiseComparableDate} interface and
  * extends the abstract class {@link PlugwiseBaseModel}.
- * 
+ *
  * @author B. van Wetten - Initial contribution
  * @author Leo Siepel - finish initial contribution
  */
@@ -154,6 +154,14 @@ public class Appliance extends PlugwiseBaseModel implements PlugwiseComparableDa
 
     public Optional<String> getIntendedBoilerTempUnit() {
         return this.pointLogs.getIntendedBoilerTempUnit();
+    }
+
+    public Optional<Double> getReturnWaterTemp() {
+        return this.pointLogs.getReturnWaterTemp();
+    }
+
+    public Optional<String> getReturnWaterTempUnit() {
+        return this.pointLogs.getReturnWaterTempUnit();
     }
 
     public Optional<Boolean> getFlameState() {
